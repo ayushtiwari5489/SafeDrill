@@ -6,12 +6,13 @@ import { EmergencyBotSection } from "./components/EmergencyBotSection";
 import { GoBagSection } from "./components/GoBagSection";
 import { TabType } from "./types";
 import { Shield, Sparkles, AlertTriangle, Heart, BookOpen, Bot, Award } from "lucide-react";
+import { ThemeProvider } from "./context/ThemeContext";
 
-export default function App() {
+function MainApp() {
   const [activeTab, setActiveTab] = useState<TabType>("quiz");
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col selection:bg-amber-500 selection:text-slate-950 font-sans">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col selection:bg-amber-500 selection:text-slate-950 font-sans transition-colors duration-200">
       {/* SafeDrill Navigation Bar */}
       <Header activeTab={activeTab} onTabChange={setActiveTab} />
 
@@ -42,24 +43,32 @@ export default function App() {
       </main>
 
       {/* Modern Footer with Quick Drill Stats */}
-      <footer className="bg-slate-950 border-t border-slate-900 mt-auto py-8 text-center text-xs text-slate-500">
+      <footer className="bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-slate-900 mt-auto py-8 text-center text-xs text-slate-500 transition-colors duration-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-3">
-          <div className="flex flex-wrap items-center justify-center gap-6 text-slate-400 font-semibold">
+          <div className="flex flex-wrap items-center justify-center gap-6 text-slate-600 dark:text-slate-400 font-semibold">
             <span className="flex items-center gap-1.5">
-              <Shield className="w-4 h-4 text-amber-400" /> SafeDrill Hackathon Edition
+              <Shield className="w-4 h-4 text-amber-500 dark:text-amber-400" /> SafeDrill Hackathon Edition
             </span>
             <span className="flex items-center gap-1.5">
-              <Sparkles className="w-4 h-4 text-emerald-400" /> Real-time 2-Choice Drills
+              <Sparkles className="w-4 h-4 text-emerald-600 dark:text-emerald-400" /> Real-time 2-Choice Drills
             </span>
             <span className="flex items-center gap-1.5">
-              <Bot className="w-4 h-4 text-cyan-400" /> AI Emergency Assistance
+              <Bot className="w-4 h-4 text-cyan-600 dark:text-cyan-400" /> AI Emergency Assistance
             </span>
           </div>
-          <p className="text-slate-600 max-w-xl mx-auto">
+          <p className="text-slate-500 dark:text-slate-600 max-w-xl mx-auto">
             SafeDrill is engineered to build instinctual muscle memory for natural disasters, domestic fires, medical crises, and urban hazards.
           </p>
         </div>
       </footer>
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <ThemeProvider>
+      <MainApp />
+    </ThemeProvider>
   );
 }

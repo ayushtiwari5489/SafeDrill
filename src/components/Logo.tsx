@@ -56,14 +56,14 @@ export const Logo: React.FC<LogoProps> = ({ className = "", size = "md", showTex
       {showText && (
         <div className="flex flex-col">
           <div className="flex items-center gap-1">
-            <span className={`font-extrabold tracking-tight text-white font-sans ${textSizes[size]}`}>
-              SAFE<span className="text-amber-400 font-black">DRILL</span>
+            <span className={`font-extrabold tracking-tight text-slate-900 dark:text-white font-sans ${textSizes[size]}`}>
+              SAFE<span className="text-amber-500 dark:text-amber-400 font-black">DRILL</span>
             </span>
-            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30 tracking-wider uppercase">
+            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-500/15 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/30 tracking-wider uppercase">
               v2.0
             </span>
           </div>
-          <span className="text-[11px] font-medium text-slate-400 -mt-0.5 tracking-wide">
+          <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400 -mt-0.5 tracking-wide">
             Disaster Readiness & Response Hub
           </span>
         </div>
