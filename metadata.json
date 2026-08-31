@@ -1,0 +1,6 @@
+{
+  "name": "SafeDrill",
+  "description": "Interactive disaster awareness, 2-choice scenario drills, life-saving training courses, and instant AI emergency response assistant.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
