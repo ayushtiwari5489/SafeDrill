@@ -49,6 +49,25 @@ export interface CourseStep {
   iconName: string;
 }
 
+export interface VideoTimestamp {
+  time: string;
+  seconds: number;
+  label: string;
+}
+
+export interface CourseVideo {
+  id: string;
+  title: string;
+  organization: string;
+  duration: string;
+  youtubeId: string;
+  description: string;
+  keyTimestamps: VideoTimestamp[];
+  level?: "Essential" | "Comprehensive" | "Pro";
+  learningObjectives?: string[];
+  instructorTip?: string;
+}
+
 export interface CourseModule {
   id: string;
   title: string;
@@ -57,8 +76,114 @@ export interface CourseModule {
   badge: string;
   summary: string;
   interactiveType?: "cpr-metronome" | "fire-pass-sim" | "go-bag-builder" | "heimlich-steps";
+  videos?: CourseVideo[];
   steps: CourseStep[];
   keyTakeaways: string[];
+}
+
+export type CourseLearningStep = 
+  | "intro" 
+  | "video" 
+  | "guidelines" 
+  | "drill" 
+  | "scenarios" 
+  | "assessment" 
+  | "certificate";
+
+export interface DrillOption {
+  id: string;
+  text: string;
+  isAppropriate: boolean;
+  actionFeedback: string;
+  explanation: string;
+  riskLevel?: "Low" | "Medium" | "High" | "Critical";
+}
+
+export interface DrillSituation {
+  id: string;
+  title: string;
+  situation: string;
+  context: string;
+  environment: string;
+  options: DrillOption[];
+}
+
+export interface ScenarioDecision {
+  id: string;
+  text: string;
+  isBest: boolean;
+  outcome: string;
+  safetyTakeaway: string;
+}
+
+export interface CourseScenario {
+  id: string;
+  environment: "School" | "College" | "Home" | "Sports" | "Public" | "Workplace";
+  locationTag: string;
+  title: string;
+  situation: string;
+  dilemma: string;
+  decisions: ScenarioDecision[];
+}
+
+export interface AssessmentQuestion {
+  id: string;
+  question: string;
+  type: "mcq" | "scenario" | "decision";
+  options: string[];
+  correctAnswerIndex: number;
+  explanation: string;
+  domainArea: string;
+}
+
+export interface CourseGuidelineContent {
+  awarenessDisclaimer: string;
+  coreSteps: {
+    number: number;
+    title: string;
+    detail: string;
+    actionCallout?: string;
+    caution?: string;
+  }[];
+  dos: string[];
+  donts: string[];
+  warningBoxes: {
+    title: string;
+    text: string;
+    level: "warning" | "danger" | "info";
+  }[];
+  emergencyDecisions: {
+    condition: string;
+    action: string;
+  }[];
+}
+
+export interface CourseIntroContent {
+  whatItIs: string;
+  whyItMatters: string;
+  goldenRule: string;
+  recognizingEmergency: string[];
+  helplineNumbers: {
+    name: string;
+    number: string;
+    note: string;
+  }[];
+  authorityReference: string;
+}
+
+export interface CourseProgressRecord {
+  introCompleted: boolean;
+  videoCompleted: boolean;
+  guidelinesCompleted: boolean;
+  drillCompleted: boolean;
+  drillScore?: number;
+  scenariosCompleted: boolean;
+  assessmentCompleted: boolean;
+  assessmentScore?: number;
+  passed: boolean;
+  certificateId?: string;
+  completionDate?: string;
+  learnerName?: string;
 }
 
 export interface EmergencyBotResponse {

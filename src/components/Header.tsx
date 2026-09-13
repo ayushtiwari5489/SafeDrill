@@ -48,7 +48,7 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, onTabChange }) => {
 
   const navItems = [
     { id: "quiz" as TabType, label: "Survival Drill (Game)", icon: Gamepad2, badge: "2-Choice" },
-    { id: "courses" as TabType, label: "Safety Courses", icon: BookOpen, badge: "Interactive" },
+    { id: "courses" as TabType, label: "Safety Courses", icon: BookOpen, badge: "YouTube Videos" },
     { id: "emergency-bot" as TabType, label: "Emergency AI Bot", icon: Bot, badge: "Live AI" },
     { id: "go-bag" as TabType, label: "72h Go-Bag", icon: Briefcase, badge: "Packer" },
   ];
