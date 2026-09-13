@@ -126,49 +126,166 @@ Style Guidelines:
       ? `Previous Context:\n${chatHistory}\n\nCurrent Emergency Message: ${problem}`
       : `Emergency Situation: ${problem} (Location: ${location || "Not specified"})`;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-3.7-flash",
-      contents: userContent,
-      config: {
-        systemInstruction: systemPrompt,
-        responseMimeType: "application/json",
-        temperature: 0.2,
-      },
-    });
+    let responseText = "";
+    let modelUsed = "gemini-3.8-flash";
 
-    const responseText = response.text || "";
     try {
-      const parsedData = JSON.parse(responseText);
-      res.json({
-        success: true,
-        source: "gemini-3.7-flash",
-        ...parsedData,
+      // Primary model: gemini-3.8-flash
+      const response = await ai.models.generateContent({
+        model: "gemini-3.8-flash",
+        contents: userContent,
+        config: {
+          systemInstruction: systemPrompt,
+          responseMimeType: "application/json",
+          temperature: 0.2,
+        },
       });
-    } catch {
-      // Fallback if parsing fails
-      res.json({
-        success: true,
-        source: "gemini-raw",
-        severity: "HIGH",
-        title: "Emergency Safety Guidance",
-        immediateSteps: [
-          "1. Assess scene safety and protect yourself first.",
-          "2. Call emergency dispatch (112 or local 911/100).",
-          "3. Follow standard disaster evacuation/first-aid protocols.",
-        ],
-        doNots: [
-          "Do not panic or rush into hazardous areas without visibility.",
-          "Do not use elevators during emergencies.",
-        ],
-        helplineNumbers: [
-          { name: "Emergency Dispatch", number: "112" },
-          { name: "Police", number: "100 / 911" },
-          { name: "Fire", number: "101" },
-          { name: "Ambulance", number: "108 / 102" },
-        ],
-        safetyTips: responseText.slice(0, 200),
-      });
+      responseText = response.text || "";
+    } catch (primaryError: any) {
+      console.warn("Primary model (gemini-3.8-flash) failed, attempting fallback to gemini-3.1-flash-lite:", primaryError?.message);
+      try {
+        modelUsed = "gemini-3.1-flash-lite";
+        const fallbackResponse = await ai.models.generateContent({
+          model: "gemini-3.1-flash-lite",
+          contents: userContent,
+          config: {
+            systemInstruction: systemPrompt,
+            responseMimeType: "application/json",
+            temperature: 0.2,
+          },
+        });
+        responseText = fallbackResponse.text || "";
+      } catch (fallbackError: any) {
+        console.error("Both Gemini models failed, deploying intelligent offline disaster engine:", fallbackError?.message);
+        // Fall back to the intelligent context-aware rule engine below
+      }
     }
+
+    if (responseText) {
+      try {
+        const parsedData = JSON.parse(responseText);
+        res.json({
+          success: true,
+          source: modelUsed,
+          ...parsedData,
+        });
+        return;
+      } catch (parseError) {
+        console.warn("JSON parsing failed on AI response:", parseError);
+      }
+    }
+
+    // Context-Aware Emergency Fallback Engine (Guarantees user always gets immediate life-saving steps)
+    const probLower = problem.toLowerCase();
+    let emergencyTitle = "Immediate Emergency Safety Protocol";
+    let calculatedSeverity: "CRITICAL" | "HIGH" | "MODERATE" = "HIGH";
+    let steps: string[] = [];
+    let doNots: string[] = [];
+    let firstAid = "";
+
+    if (probLower.includes("earthquake") || probLower.includes("quake") || probLower.includes("shake") || probLower.includes("tremor")) {
+      emergencyTitle = "Earthquake Survival & Structural Hazard Protocol";
+      calculatedSeverity = "CRITICAL";
+      steps = [
+        "1. DROP, COVER, and HOLD ON under a sturdy table, desk, or against an interior wall.",
+        "2. Protect your head and neck with your arms or heavy books/backpack.",
+        "3. Once shaking stops, evacuate using stairs only; check for gas smells or electrical sparks.",
+        "4. Move to an open area clear of power lines, glass facades, and unreinforced chimneys."
+      ];
+      doNots = [
+        "DO NOT run outside while the ground is actively shaking (falling glass/masonry causes most injuries).",
+        "DO NOT use elevators under any circumstances.",
+        "DO NOT light matches or flick light switches in case of ruptured gas pipes."
+      ];
+    } else if (probLower.includes("fire") || probLower.includes("smoke") || probLower.includes("burn") || probLower.includes("flame")) {
+      emergencyTitle = "Structure Fire & Smoke Inhalation Protocol";
+      calculatedSeverity = "CRITICAL";
+      steps = [
+        "1. Stay low to the ground (crawl below smoke where breathable air remains).",
+        "2. Feel closed doors with the back of your hand before opening—if hot, keep closed and find an alternate exit.",
+        "3. Evacuate immediately and pull the nearest manual fire pull station.",
+        "4. If clothes catch fire: STOP, DROP, and ROLL immediately to smother flames."
+      ];
+      doNots = [
+        "DO NOT inhale rising toxic black smoke—cover mouth/nose with a wet cloth if possible.",
+        "DO NOT re-enter a burning building for pets or personal valuables.",
+        "DO NOT open hot doors or throw water on kitchen grease or electrical fires."
+      ];
+      firstAid = "For minor thermal burns, cool under clean running water for 10-20 minutes. Never apply ice, butter, or oil.";
+    } else if (probLower.includes("gas") || probLower.includes("lpg") || probLower.includes("smell") || probLower.includes("leak") || probLower.includes("cylinder")) {
+      emergencyTitle = "LPG / Natural Gas Leak Immediate Containment";
+      calculatedSeverity = "CRITICAL";
+      steps = [
+        "1. Open all exterior windows and doors wide to ventilate the accumulated gas.",
+        "2. Shut off the gas cylinder regulator or main emergency gas meter valve immediately.",
+        "3. Evacuate all occupants and pets to fresh air outside at a safe distance.",
+        "4. Call the Emergency Gas Helpline and 112 from OUTSIDE the building."
+      ];
+      doNots = [
+        "DO NOT turn any electrical light switches ON or OFF (sparks can ignite fuel-air vapor).",
+        "DO NOT light matches, lighters, or use mobile phones inside the affected room.",
+        "DO NOT ring doorbells or start vehicle engines nearby."
+      ];
+    } else if (probLower.includes("cpr") || probLower.includes("unconscious") || probLower.includes("collapse") || probLower.includes("breath") || probLower.includes("heart")) {
+      emergencyTitle = "Adult Cardiac Arrest & Unconscious Bystander Protocol";
+      calculatedSeverity = "CRITICAL";
+      steps = [
+        "1. Shake shoulders firmly and shout: 'Are you okay?' Check for normal chest rise/breathing (max 10 seconds).",
+        "2. Call 112 / 108 immediately or point to a specific person: 'Call 112 and find an AED!'",
+        "3. Place heel of one hand in the center of the chest, interlock fingers, lock elbows straight.",
+        "4. Push hard and fast at 100-120 BPM (to the beat of 'Stayin Alive') at 5-6 cm depth with full recoil."
+      ];
+      doNots = [
+        "DO NOT stop compressions for more than 10 seconds until paramedics arrive or AED arrives.",
+        "DO NOT give food, liquids, or place pills in an unconscious person's mouth.",
+        "DO NOT bend elbows while compressing; use upper body weight."
+      ];
+      firstAid = "Perform Hands-Only CPR without interruption: 100-120 compressions/min until help arrives.";
+    } else if (probLower.includes("flood") || probLower.includes("water") || probLower.includes("submerged") || probLower.includes("drown")) {
+      emergencyTitle = "Flash Flood & Rapid Inundation Protocol";
+      calculatedSeverity = "HIGH";
+      steps = [
+        "1. Move immediately to the highest accessible floor or rooftop; take emergency essentials.",
+        "2. Turn off the main electrical breaker before water reaches outlets to prevent electrocution.",
+        "3. Avoid walking or driving through moving floodwaters ('Turn Around, Don't Drown').",
+        "4. Signal rescue teams with a bright cloth, whistle, or flashlight from upper windows."
+      ];
+      doNots = [
+        "DO NOT drive into floodwaters—just 6 inches of moving water can knock you down, and 12 inches can sweep a car.",
+        "DO NOT touch submerged electrical wiring, breaker panels, or appliances.",
+        "DO NOT drink tap or flood water (assume severe contamination)."
+      ];
+    } else {
+      steps = [
+        "1. Assess scene safety: Ensure you and others are not in immediate physical danger from hazards.",
+        "2. Call National Emergency Services (Dial 112 / 100 / 101 / 108) and state your exact location.",
+        "3. Administer immediate first aid for severe bleeding or airway obstruction if safe to do so.",
+        "4. Follow instructions from emergency responders and keep mobile line clear."
+      ];
+      doNots = [
+        "DO NOT place yourself into dangerous conditions without proper rescue gear.",
+        "DO NOT move victims with suspected spinal/neck injuries unless there is an imminent fire or structural collapse risk.",
+        "DO NOT circulate unverified rumors or panic in crowded spaces."
+      ];
+    }
+
+    res.json({
+      success: true,
+      source: "safedrill_emergency_engine",
+      severity: calculatedSeverity,
+      title: emergencyTitle,
+      immediateSteps: steps,
+      doNots: doNots,
+      helplineNumbers: [
+        { name: "National Emergency (Universal)", number: "112" },
+        { name: "Police Dispatch", number: "100" },
+        { name: "Fire & Rescue Service", number: "101" },
+        { name: "Medical / Ambulance", number: "108 / 102" },
+        { name: "Disaster Management Authority", number: "1078" },
+      ],
+      medicalFirstAid: firstAid,
+      safetyTips: "Remain calm, keep your phone in battery-saver mode, and follow official NDRF/ERSS directives.",
+    });
   } catch (error: any) {
     console.error("Error in /api/emergency-bot:", error);
     res.status(500).json({

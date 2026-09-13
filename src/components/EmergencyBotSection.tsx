@@ -87,6 +87,10 @@ export const EmergencyBotSection: React.FC = () => {
         }),
       });
 
+      if (!response.ok) {
+        throw new Error(`Server returned ${response.status}`);
+      }
+
       const data: EmergencyBotResponse = await response.json();
 
       const botMsg: ChatMessage = {
@@ -97,6 +101,18 @@ export const EmergencyBotSection: React.FC = () => {
       };
 
       setMessages((prev) => [...prev, botMsg]);
+
+      // Read aloud top emergency step if voice/sound is active
+      if (soundOn && data.immediateSteps && data.immediateSteps.length > 0) {
+        if (typeof window !== "undefined" && "speechSynthesis" in window) {
+          window.speechSynthesis.cancel();
+          const utterance = new SpeechSynthesisUtterance(
+            `${data.title}. Priority Step 1: ${data.immediateSteps[0]}. Call 1 1 2 immediately if in danger.`
+          );
+          utterance.rate = 1.05;
+          window.speechSynthesis.speak(utterance);
+        }
+      }
     } catch (err: any) {
       // Local fallback emergency response
       const fallbackMsg: ChatMessage = {
@@ -265,7 +281,11 @@ export const EmergencyBotSection: React.FC = () => {
                         </div>
 
                         <div className="text-[11px] font-semibold text-slate-400">
-                          Source: <span className="text-cyan-400">SafeDrill AI</span>
+                          Source: <span className="text-cyan-400">
+                            {msg.response.source?.includes("gemini") 
+                              ? `Google ${msg.response.source}` 
+                              : "SafeDrill Emergency Engine"}
+                          </span>
                         </div>
                       </div>
 
@@ -280,7 +300,7 @@ export const EmergencyBotSection: React.FC = () => {
                           <CheckCircle className="w-4 h-4" /> Immediate Life-Saving Steps:
                         </div>
                         <div className="space-y-2">
-                          {msg.response.immediateSteps.map((step, idx) => (
+                          {(msg.response.immediateSteps || []).map((step, idx) => (
                             <div
                               key={idx}
                               className="p-3.5 rounded-xl bg-slate-900 border border-slate-800 text-sm font-semibold text-slate-100 flex items-start gap-3 shadow-sm"
