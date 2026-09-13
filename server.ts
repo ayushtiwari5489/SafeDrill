@@ -295,6 +295,209 @@ Style Guidelines:
   }
 });
 
+// Short Answer Evaluation Route (AI Disaster Preparedness Learning Engine)
+app.post("/api/evaluate-short-answer", async (req, res) => {
+  try {
+    const { 
+      scenario, 
+      question, 
+      userAnswer, 
+      expectedConcepts = [], 
+      category = "general",
+      ageGroup = "11-14",
+      difficulty = 2 
+    } = req.body;
+
+    if (!userAnswer || typeof userAnswer !== "string" || !userAnswer.trim()) {
+      res.status(400).json({ error: "Please provide a valid answer to evaluate." });
+      return;
+    }
+
+    const apiKey = process.env.GEMINI_API_KEY;
+
+    if (apiKey) {
+      const ai = getGenAI();
+      const systemInstruction = `You are the Disaster Preparedness Learning Evaluator for children and young students (approx. age ${ageGroup}).
+Your mission is to evaluate the learner's short-answer safety response to a realistic emergency scenario.
+
+CORE LEARNING PHILOSOPHY:
+The system teaches: RECOGNIZE → PROTECT → RESPOND → EVACUATE IF INSTRUCTED → ASSEMBLE → COMMUNICATE → WAIT FOR INSTRUCTIONS.
+Prioritize:
+1. Immediate personal protection & calm.
+2. Following instructions from teachers, parents, emergency personnel.
+3. Moving away from hazards safely.
+4. Alerting responsible adults rather than attempting heroic rescue.
+5. Evacuating along designated routes to assembly points.
+6. NEVER re-entering dangerous buildings or touching floodwaters/downed wires.
+
+CRITICAL EVALUATION RULES:
+- Use semantic evaluation: Do NOT require exact words or perfect grammar. Accept reasonable variations in wording.
+- Never shame the learner. If incorrect or risky, use encouraging, supportive phrasing (e.g., "Good attempt, but...", "Not the safest choice because...").
+- Calculate an honest score (0 to 100):
+  * 80-100: Safe, understands the core emergency procedure.
+  * 50-79: Partially safe, got some elements right but missed crucial steps.
+  * 0-49: Unsafe, recommended action puts them or others in direct hazard (e.g. running outside during quakes, taking elevator, going back for a phone, wading into floodwater).
+- Status must be one of: "SAFE", "PARTIALLY_SAFE", "UNSAFE".
+- Provide 2-4 concrete "betterOptions" (safer alternative actions based on disaster safety guidelines).
+- Provide a concise "safetyPrinciple" (1 life-saving rule takeaway).
+- Provide a "followUpQuestion" for continuing situational awareness.
+
+Return ONLY a valid JSON object matching this schema:
+{
+  "status": "SAFE" | "PARTIALLY_SAFE" | "UNSAFE",
+  "score": number,
+  "overallAssessment": "Short encouraging assessment phrase",
+  "conceptsIdentified": ["Concept 1 child covered", "Concept 2"],
+  "conceptsMissed": ["Vital concept 1 they missed", "Vital concept 2"],
+  "feedback": "2-3 sentences of constructive, age-appropriate educational feedback",
+  "betterOptions": ["Better option 1", "Better option 2", "Better option 3"],
+  "safetyPrinciple": "Core life-saving rule summary",
+  "followUpQuestion": "Follow-up question for continuous learning"
+}`;
+
+      const userPrompt = `DISASTER SCENARIO:
+"${scenario}"
+
+QUESTION ASKED:
+"${question}"
+
+EXPECTED SAFETY CONCEPTS:
+${expectedConcepts.map((c: string) => `- ${c}`).join("\n")}
+
+LEARNER'S ANSWER:
+"${userAnswer}"
+
+Evaluate the answer now based on the safety principles.`;
+
+      let responseText = "";
+      let modelUsed = "gemini-3.8-flash";
+
+      try {
+        const response = await ai.models.generateContent({
+          model: "gemini-3.8-flash",
+          contents: userPrompt,
+          config: {
+            systemInstruction,
+            responseMimeType: "application/json",
+            temperature: 0.2,
+          },
+        });
+        responseText = response.text || "";
+      } catch (geminiError: any) {
+        console.warn("Primary gemini-3.8-flash failed, trying gemini-3.1-flash-lite:", geminiError?.message);
+        try {
+          modelUsed = "gemini-3.1-flash-lite";
+          const fallbackRes = await ai.models.generateContent({
+            model: "gemini-3.1-flash-lite",
+            contents: userPrompt,
+            config: {
+              systemInstruction,
+              responseMimeType: "application/json",
+              temperature: 0.2,
+            },
+          });
+          responseText = fallbackRes.text || "";
+        } catch (fbError: any) {
+          console.error("Gemini evaluation error, using fallback engine:", fbError?.message);
+        }
+      }
+
+      if (responseText) {
+        try {
+          const parsed = JSON.parse(responseText);
+          res.json({
+            success: true,
+            source: modelUsed,
+            ...parsed,
+          });
+          return;
+        } catch (e) {
+          console.warn("Failed to parse Gemini short answer evaluation JSON:", e);
+        }
+      }
+    }
+
+    // Semantic Rule-Based Evaluation Fallback (Guaranteed immediate feedback)
+    const lowerAns = userAnswer.toLowerCase();
+    const identified: string[] = [];
+    const missed: string[] = [];
+
+    // Check against expected concepts
+    expectedConcepts.forEach((concept: string) => {
+      const words = concept.toLowerCase().split(/\s+/).filter((w) => w.length > 3);
+      const matches = words.filter((w) => lowerAns.includes(w));
+      if (matches.length >= 1) {
+        identified.push(concept);
+      } else {
+        missed.push(concept);
+      }
+    });
+
+    // Check for obvious red flags
+    const hasUnsafeRunning = (lowerAns.includes("run") || lowerAns.includes("sprint")) && category === "earthquake";
+    const hasElevator = lowerAns.includes("elevator") || lowerAns.includes("lift");
+    const hasReturnForBag = (lowerAns.includes("go back") || lowerAns.includes("return") || lowerAns.includes("get my bag") || lowerAns.includes("phone")) && category === "evacuation";
+    const hasWadingFlood = (lowerAns.includes("walk through") || lowerAns.includes("wade") || lowerAns.includes("swim") || lowerAns.includes("cross")) && category === "flood";
+    const hasHeroicAction = lowerAns.includes("fight the fire") || lowerAns.includes("rescue by myself") || lowerAns.includes("touch the wire");
+
+    const isDangerous = hasUnsafeRunning || hasElevator || hasReturnForBag || hasWadingFlood || hasHeroicAction;
+
+    let status: "SAFE" | "PARTIALLY_SAFE" | "UNSAFE" = "SAFE";
+    let score = 85;
+    let feedback = "Good decision! You demonstrated clear disaster awareness and prioritized personal safety.";
+
+    if (isDangerous) {
+      status = "UNSAFE";
+      score = Math.max(25, 45 - missed.length * 5);
+      feedback = "Not the safest choice. In real emergencies, this action introduces severe hazards (such as falling debris, smoke inhalation, or electrical shock). Always prioritize protection and follow official guidance.";
+    } else if (identified.length >= 2 || missed.length === 0) {
+      status = "SAFE";
+      score = Math.min(100, 80 + identified.length * 7);
+      feedback = `Great answer! You correctly recognized crucial safety moves like "${identified[0] || 'protecting yourself'}". Following standard emergency procedures keeps you and others safe.`;
+    } else if (identified.length === 1) {
+      status = "PARTIALLY_SAFE";
+      score = 65;
+      feedback = `Good start! You remembered to ${identified[0].toLowerCase()}, but you missed other important steps like ${missed[0] ? missed[0].toLowerCase() : 'following the evacuation procedure'}.`;
+    } else {
+      status = "PARTIALLY_SAFE";
+      score = 55;
+      feedback = "You gave a thoughtful response. However, disaster safety protocols recommend focusing immediately on protective actions and listening to emergency personnel.";
+    }
+
+    const betterOptions = [
+      category === "earthquake" 
+        ? "Drop, Cover, and Hold On under a sturdy desk away from windows."
+        : category === "fire"
+        ? "Crawl low beneath smoke and evacuate toward the designated assembly area."
+        : category === "flood"
+        ? "Turn Around, Don't Drown: Avoid moving water and stay on high ground."
+        : "Stay calm, protect yourself, and follow instructions from responsible adults.",
+      "Never use elevators or return to collect personal belongings during an active evacuation.",
+      "Stay at the designated assembly point until official roll call is complete."
+    ];
+
+    res.json({
+      success: true,
+      source: "disaster_safety_semantic_engine",
+      status,
+      score,
+      overallAssessment: status === "SAFE" ? "Outstanding Survival Decision" : status === "PARTIALLY_SAFE" ? "Partially Safe (Needs More Key Steps)" : "High Risk Action (Review Procedure)",
+      conceptsIdentified: identified.length > 0 ? identified : ["Attempted realistic decision"],
+      conceptsMissed: missed.slice(0, 3),
+      feedback,
+      betterOptions,
+      safetyPrinciple: "RECOGNIZE → PROTECT → RESPOND: Follow instructions from responsible adults and never put yourself in harm's way.",
+      followUpQuestion: "Once you reach the assembly point, what should you do if your friend is unaccounted for?"
+    });
+  } catch (error: any) {
+    console.error("Error in /api/evaluate-short-answer:", error);
+    res.status(500).json({
+      error: "Unable to evaluate answer at this moment. Please try again.",
+      details: error?.message || "Unknown error",
+    });
+  }
+});
+
 // Setup Vite development middleware or static asset serving
 async function startServer() {
   if (process.env.NODE_ENV !== "production") {

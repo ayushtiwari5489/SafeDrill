@@ -193,6 +193,24 @@ html.light .text-cyan-400 {
   color: #0284c7 !important;
 }
 
+html.light [class*="bg-cyan-950"] {
+  background-color: #f0f9ff !important;
+  border-color: #bae6fd !important;
+}
+
+html.light [class*="bg-cyan-950"] * {
+  color: #0369a1 !important;
+}
+
+html.light [class*="bg-amber-950"] {
+  background-color: #fefce8 !important;
+  border-color: #fef08a !important;
+}
+
+html.light [class*="bg-amber-950"] * {
+  color: #854d0e !important;
+}
+
 /* 10. PRESERVE SOLID ACTION BUTTONS (White text on vibrant buttons) */
 html.light .bg-red-600,
 html.light .bg-red-500,
@@ -327,4 +345,18 @@ body:not(.dark) ::-webkit-scrollbar-thumb {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
+}
+
+/* =========================================================================
+   SOS EMERGENCY DIALOG STYLES
+   Ensures the SOS dialog box is cleanly centered, non-clipped, and properly shaded.
+   ========================================================================= */
+.sos-modal-backdrop {
+  background-color: rgba(2, 6, 23, 0.8) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+}
+
+html.light .sos-modal-backdrop {
+  background-color: rgba(15, 23, 42, 0.65) !important;
 }

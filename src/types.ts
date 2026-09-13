@@ -91,3 +91,36 @@ export interface GoBagItem {
   description: string;
   packed: boolean;
 }
+
+export interface ShortAnswerScenario {
+  id: string;
+  category: "earthquake" | "fire" | "flood" | "storm" | "lightning" | "heat" | "evacuation" | "communication" | "bus";
+  categoryLabel: string;
+  ageGroup: "8-10" | "11-14" | "15-17";
+  ageLabel: string;
+  difficulty: 1 | 2 | 3 | 4 | 5;
+  environment: string;
+  scenario: string;
+  question: string;
+  questionType: "decision" | "explanation" | "recall" | "communication" | "preparation" | "reflection";
+  expectedConcepts: string[];
+  sampleGoodAnswer: string;
+  betterOptions: string[];
+  safetyPrinciple: string;
+  didYouKnow?: string;
+  followUpPrompt?: string;
+}
+
+export interface ShortAnswerEvaluationResult {
+  success: boolean;
+  source?: string;
+  status: "SAFE" | "PARTIALLY_SAFE" | "UNSAFE";
+  score: number; // 0 to 100
+  overallAssessment: string;
+  conceptsIdentified: string[];
+  conceptsMissed: string[];
+  feedback: string;
+  betterOptions: string[];
+  safetyPrinciple: string;
+  followUpQuestion?: string;
+}
