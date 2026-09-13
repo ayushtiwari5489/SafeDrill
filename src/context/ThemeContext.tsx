@@ -13,14 +13,19 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [theme, setThemeState] = useState<Theme>(() => {
     try {
-      const saved = localStorage.getItem("safedrill_theme");
+      // Clear legacy dark session if it exists to satisfy the user's explicit request for light theme
+      const legacy = localStorage.getItem("safedrill_theme");
+      if (legacy === "dark") {
+        localStorage.removeItem("safedrill_theme");
+      }
+      const saved = localStorage.getItem("safedrill_theme_v3");
       if (saved === "light" || saved === "dark") {
         return saved;
       }
     } catch {
       // Fallback
     }
-    return "dark"; // Default to dark tactical emergency theme
+    return "light"; // Default to light theme across the whole website
   });
 
   useEffect(() => {
@@ -39,7 +44,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       document.body.style.color = "#0f172a";
     }
     try {
-      localStorage.setItem("safedrill_theme", theme);
+      localStorage.setItem("safedrill_theme_v3", theme);
     } catch {
       // ignore
     }
