@@ -1,78 +1,72 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @layer base {
   body {
-    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     transition: background-color 0.2s ease, color 0.2s ease;
   }
 }
 
-/* Light Theme Styling Overrides */
-html.light body {
-  background-color: #f8fafc;
-  color: #0f172a;
-}
+/* =========================================================================
+   COMPREHENSIVE LIGHT THEME ENGINE
+   Engineered for high readability, crisp card surfaces, and pristine contrast.
+   ========================================================================= */
 
-html.light .bg-slate-950 {
+/* Root & Global Canvas */
+html.light,
+html.light body,
+body:not(.dark) {
   background-color: #f8fafc !important;
-}
-
-html.light .bg-slate-900 {
-  background-color: #ffffff !important;
-}
-
-html.light .bg-slate-900\/90 {
-  background-color: rgba(255, 255, 255, 0.9) !important;
-}
-
-html.light .bg-slate-900\/80 {
-  background-color: rgba(255, 255, 255, 0.8) !important;
-}
-
-html.light .bg-slate-900\/60 {
-  background-color: rgba(241, 245, 249, 0.8) !important;
-}
-
-html.light .bg-slate-950\/90 {
-  background-color: rgba(255, 255, 255, 0.95) !important;
-}
-
-html.light .bg-slate-950\/80 {
-  background-color: rgba(15, 23, 42, 0.7) !important;
-}
-
-html.light .bg-slate-800 {
-  background-color: #f1f5f9 !important;
-}
-
-html.light .bg-slate-800\/80 {
-  background-color: rgba(241, 245, 249, 0.85) !important;
-}
-
-html.light .bg-slate-800\/60 {
-  background-color: rgba(241, 245, 249, 0.6) !important;
-}
-
-html.light .bg-slate-800\/40 {
-  background-color: rgba(241, 245, 249, 0.4) !important;
-}
-
-html.light .border-slate-800 {
-  border-color: #e2e8f0 !important;
-}
-
-html.light .border-slate-900 {
-  border-color: #e2e8f0 !important;
-}
-
-html.light .border-slate-700 {
-  border-color: #cbd5e1 !important;
-}
-
-html.light .text-white {
   color: #0f172a !important;
 }
 
+/* 1. Primary Card Surfaces (Replace dark panels with pure white elevated cards) */
+html.light .bg-slate-900,
+html.light .bg-slate-950,
+html.light [class*="bg-slate-900"],
+html.light [class*="bg-slate-950"] {
+  background-color: #ffffff !important;
+}
+
+/* 2. Secondary Panels, Inset Well & HUD Items */
+html.light .bg-slate-850,
+html.light .bg-slate-800,
+html.light [class*="bg-slate-850"],
+html.light [class*="bg-slate-800"] {
+  background-color: #f1f5f9 !important;
+}
+
+/* Interactive Hover States on light surfaces */
+html.light .hover\:bg-slate-850:hover,
+html.light .hover\:bg-slate-800:hover,
+html.light .hover\:bg-slate-700:hover,
+html.light [class*="hover:bg-slate-850"]:hover,
+html.light [class*="hover:bg-slate-800"]:hover {
+  background-color: #e2e8f0 !important;
+}
+
+html.light .hover\:bg-slate-900:hover,
+html.light [class*="hover:bg-slate-900"]:hover {
+  background-color: #f8fafc !important;
+}
+
+/* 3. Modern Subtle Light Borders */
+html.light .border-slate-900,
+html.light .border-slate-800,
+html.light [class*="border-slate-900"],
+html.light [class*="border-slate-800"] {
+  border-color: #e2e8f0 !important;
+}
+
+html.light .border-slate-700,
+html.light [class*="border-slate-700"] {
+  border-color: #cbd5e1 !important;
+}
+
+/* 4. High-Contrast Typography */
+html.light .text-white,
 html.light .text-slate-100 {
   color: #0f172a !important;
 }
@@ -86,14 +80,29 @@ html.light .text-slate-300 {
 }
 
 html.light .text-slate-400 {
-  color: #64748b !important;
+  color: #475569 !important;
 }
 
 html.light .text-slate-500 {
   color: #64748b !important;
 }
 
+html.light .text-slate-600 {
+  color: #475569 !important;
+}
+
+/* 5. Soft Light Card Elevation Shadows */
+html.light .shadow-xl {
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.06), 0 2px 6px -1px rgba(15, 23, 42, 0.03) !important;
+}
+
+html.light .shadow-2xl {
+  box-shadow: 0 10px 30px -4px rgba(15, 23, 42, 0.07), 0 4px 12px -2px rgba(15, 23, 42, 0.03) !important;
+}
+
+/* 6. Form Inputs & Select Elements */
 html.light input,
+html.light select,
 html.light textarea {
   background-color: #ffffff !important;
   color: #0f172a !important;
@@ -105,47 +114,180 @@ html.light textarea::placeholder {
   color: #94a3b8 !important;
 }
 
-/* Ensure high contrast for colored buttons & badges in light mode */
+html.light select option {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+}
+
+/* 7. Amber Theme Badges & Highlights */
+html.light .bg-amber-500 {
+  background-color: #f59e0b !important;
+  color: #0f172a !important;
+}
+
+html.light .text-amber-300,
+html.light .text-amber-400 {
+  color: #b45309 !important;
+}
+
+html.light [class*="bg-amber-500/10"],
+html.light [class*="bg-amber-500/15"],
+html.light [class*="bg-amber-500/20"] {
+  background-color: #fef3c7 !important;
+  border-color: #fde68a !important;
+}
+
+html.light [class*="bg-amber-500/10"] *,
+html.light [class*="bg-amber-500/15"] *,
+html.light [class*="bg-amber-500/20"] * {
+  color: #92400e !important;
+}
+
+/* 8. Emerald Positive Statuses */
+html.light .text-emerald-300,
+html.light .text-emerald-400 {
+  color: #047857 !important;
+}
+
+html.light [class*="bg-emerald-950"],
+html.light [class*="bg-emerald-500/10"],
+html.light [class*="bg-emerald-500/20"] {
+  background-color: #ecfdf5 !important;
+  border-color: #a7f3d0 !important;
+}
+
+html.light [class*="bg-emerald-950"] *,
+html.light [class*="bg-emerald-500/10"] *,
+html.light [class*="bg-emerald-500/20"] * {
+  color: #065f46 !important;
+}
+
+/* 9. Emergency Red & Rose Alerts */
+html.light .text-red-400,
+html.light .text-rose-400 {
+  color: #dc2626 !important;
+}
+
+html.light [class*="bg-red-950"],
+html.light [class*="bg-rose-950"],
+html.light [class*="bg-red-500/10"],
+html.light [class*="bg-red-500/20"],
+html.light [class*="bg-rose-500/10"],
+html.light [class*="bg-rose-500/20"] {
+  background-color: #fef2f2 !important;
+  border-color: #fecaca !important;
+}
+
+html.light [class*="bg-red-950"] *,
+html.light [class*="bg-rose-950"] *,
+html.light [class*="bg-red-500/10"] *,
+html.light [class*="bg-red-500/20"] *,
+html.light [class*="bg-rose-500/10"] *,
+html.light [class*="bg-rose-500/20"] * {
+  color: #991b1b !important;
+}
+
+/* Cyan Accents */
+html.light .text-cyan-300,
+html.light .text-cyan-400 {
+  color: #0284c7 !important;
+}
+
+html.light [class*="bg-cyan-950"] {
+  background-color: #f0f9ff !important;
+  border-color: #bae6fd !important;
+}
+
+html.light [class*="bg-cyan-950"] * {
+  color: #0369a1 !important;
+}
+
+html.light [class*="bg-amber-950"] {
+  background-color: #fefce8 !important;
+  border-color: #fef08a !important;
+}
+
+html.light [class*="bg-amber-950"] * {
+  color: #854d0e !important;
+}
+
+/* 10. PRESERVE SOLID ACTION BUTTONS (White text on vibrant buttons) */
 html.light .bg-red-600,
 html.light .bg-red-500,
 html.light .bg-emerald-600,
 html.light .bg-emerald-500,
-html.light .bg-blue-600,
-html.light .bg-blue-500,
-html.light .bg-amber-500,
-html.light .bg-gradient-to-r.from-amber-500 {
-  color: inherit;
-}
-
-html.light .bg-red-600 .text-white,
-html.light .bg-red-600 span,
-html.light .bg-emerald-600 .text-white,
-html.light .bg-emerald-600 span,
-html.light .bg-blue-600 .text-white,
-html.light .bg-blue-600 span {
+html.light .bg-rose-600,
+html.light .bg-orange-600,
+html.light [class*="from-red-600"],
+html.light [class*="to-rose-600"] {
   color: #ffffff !important;
 }
 
-html.light .bg-amber-500,
-html.light .bg-gradient-to-r.from-amber-500 {
+html.light .bg-red-600 *,
+html.light .bg-red-500 *,
+html.light .bg-emerald-600 *,
+html.light .bg-emerald-500 *,
+html.light .bg-rose-600 *,
+html.light .bg-orange-600 *,
+html.light [class*="from-red-600"] *,
+html.light [class*="to-rose-600"] * {
+  color: #ffffff !important;
+}
+
+html.light .bg-amber-500 *,
+html.light [class*="from-amber-500"] * {
   color: #0f172a !important;
 }
 
-html.light .bg-amber-500 .text-slate-950,
-html.light .bg-gradient-to-r.from-amber-500 .text-slate-950,
-html.light .bg-gradient-to-r.from-amber-500 span {
+/* 11. Interactive Decision Cards in 2-Option Drill */
+html.light button[id^="option-"] {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
   color: #0f172a !important;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
 }
 
-/* Custom shadows in light mode */
-html.light .shadow-xl {
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.03) !important;
+html.light button[id^="option-"]:hover {
+  border-color: #f59e0b !important;
+  background-color: #fffbeb !important;
 }
 
-html.light .shadow-2xl {
-  box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+/* 12. Simulator Environments */
+/* The Fire stage is a dark chamber so fire particles and spray are clearly visible */
+html.light #fire-interactive-stage {
+  background: linear-gradient(to bottom, #0f172a, #1e293b, #090d16) !important;
+  border-color: #334155 !important;
 }
 
+html.light #fire-interactive-stage * {
+  color: #f8fafc !important;
+}
+
+html.light #fire-interactive-stage .text-slate-300 {
+  color: #cbd5e1 !important;
+}
+
+/* Mini-games in light mode */
+html.light #drop-cover-hold-mini-game,
+html.light #cpr-interactive-trainer {
+  background-color: #ffffff !important;
+}
+
+/* 13. AI Emergency Bot Banner */
+html.light #safedrill-emergency-bot-section > div:first-child {
+  background: linear-gradient(to right, #fff1f2, #ffffff, #ffffff) !important;
+  border-color: #fecdd3 !important;
+}
+
+html.light #safedrill-emergency-bot-section > div:first-child h2 {
+  color: #991b1b !important;
+}
+
+html.light #safedrill-emergency-bot-section > div:first-child p {
+  color: #64748b !important;
+}
+
+/* Animations */
 @keyframes flame-flicker {
   0%, 100% {
     transform: scale(1) rotate(-1deg);
@@ -188,17 +330,33 @@ html.light .shadow-2xl {
 html.dark ::-webkit-scrollbar-track {
   background: #020617;
 }
-html.light ::-webkit-scrollbar-track {
+html.light ::-webkit-scrollbar-track,
+body:not(.dark) ::-webkit-scrollbar-track {
   background: #f1f5f9;
 }
 html.dark ::-webkit-scrollbar-thumb {
   background: #334155;
   border-radius: 9999px;
 }
-html.light ::-webkit-scrollbar-thumb {
+html.light ::-webkit-scrollbar-thumb,
+body:not(.dark) ::-webkit-scrollbar-thumb {
   background: #cbd5e1;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
+}
+
+/* =========================================================================
+   SOS EMERGENCY DIALOG STYLES
+   Ensures the SOS dialog box is cleanly centered, non-clipped, and properly shaded.
+   ========================================================================= */
+.sos-modal-backdrop {
+  background-color: rgba(2, 6, 23, 0.8) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+}
+
+html.light .sos-modal-backdrop {
+  background-color: rgba(15, 23, 42, 0.65) !important;
 }

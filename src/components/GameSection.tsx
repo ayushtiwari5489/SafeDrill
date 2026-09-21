@@ -3,7 +3,7 @@ import {
   Heart, Zap, Award, AlertTriangle, Shield, Clock, 
   RotateCcw, Sparkles, CheckCircle2, XCircle, Compass, 
   Building2, School, Train, Home, ShoppingBag, Waves, 
-  ChevronRight, Volume2, VolumeX, Flame, Activity
+  ChevronRight, Volume2, VolumeX, Flame, Activity, PenLine
 } from "lucide-react";
 import { SCENARIOS } from "../data";
 import { ScenarioQuestion, DecisionOption, LocationType } from "../types";
@@ -18,6 +18,7 @@ import confetti from "canvas-confetti";
 import { DropCoverHoldSim } from "./DropCoverHoldSim";
 import { FireExtinguisherSim } from "./FireExtinguisherSim";
 import { CprTrainer } from "./CprTrainer";
+import { ShortAnswerDrill } from "./ShortAnswerDrill";
 
 interface GameSectionProps {
   onNavigateToCourses: () => void;
@@ -38,6 +39,7 @@ export const GameSection: React.FC<GameSectionProps> = ({ onNavigateToCourses, o
   const [isVictory, setIsVictory] = useState(false);
   const [soundOn, setSoundOn] = useState(isSoundEnabled());
   const [activeMiniGame, setActiveMiniGame] = useState<"none" | "drop" | "fire" | "cpr">("none");
+  const [drillMode, setDrillMode] = useState<"short-answer" | "rapid-choice" | "simulators">("short-answer");
 
   // Filtered scenarios
   const questions: ScenarioQuestion[] = selectedLocation === "all"
@@ -48,7 +50,7 @@ export const GameSection: React.FC<GameSectionProps> = ({ onNavigateToCourses, o
 
   // Timer countdown
   useEffect(() => {
-    if (isAnswered || isGameOver || isVictory || activeMiniGame !== "none") return;
+    if (drillMode !== "rapid-choice" || isAnswered || isGameOver || isVictory || activeMiniGame !== "none") return;
 
     setTimeLeft(currentQ.urgencySeconds || 12);
     const interval = setInterval(() => {
@@ -233,118 +235,192 @@ export const GameSection: React.FC<GameSectionProps> = ({ onNavigateToCourses, o
         </div>
       </div>
 
-      {/* Location Filter / Campaign Selector */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
-        <span className="text-xs font-bold text-slate-400 uppercase tracking-wider whitespace-nowrap mr-1 flex items-center gap-1">
-          <Compass className="w-3.5 h-3.5 text-amber-400" /> Places:
-        </span>
-        {[
-          { id: "all", label: "All Scenarios", icon: Shield },
-          { id: "school", label: "School Classroom", icon: School },
-          { id: "highrise", label: "High-Rise Apartment", icon: Building2 },
-          { id: "metro", label: "Metro Station", icon: Train },
-          { id: "home", label: "Home & Kitchen", icon: Home },
-          { id: "mall", label: "Shopping Mall", icon: ShoppingBag },
-          { id: "outdoors", label: "Coast & Outdoors", icon: Waves },
-        ].map((loc) => {
-          const Icon = loc.icon;
-          const isSelected = selectedLocation === loc.id;
-          return (
+      {/* Mode Switcher Tabs */}
+      <div className="flex flex-wrap items-center justify-between gap-3 p-2 rounded-2xl bg-slate-900 border border-slate-800 shadow-md">
+        <div className="flex items-center gap-1.5 p-1 bg-slate-950 rounded-xl border border-slate-800/80 w-full sm:w-auto">
+          <button
+            id="mode-short-answer-btn"
+            onClick={() => {
+              setDrillMode("short-answer");
+              setActiveMiniGame("none");
+            }}
+            className={`flex-1 sm:flex-initial px-4 py-2 rounded-lg text-xs md:text-sm font-black flex items-center justify-center gap-2 transition-all ${
+              drillMode === "short-answer"
+                ? "bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 shadow-md shadow-orange-500/25"
+                : "text-slate-400 hover:text-slate-200"
+            }`}
+          >
+            <PenLine className="w-4 h-4" />
+            <span>AI Short-Answer Challenges</span>
+            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-slate-900/40 text-slate-950 font-extrabold uppercase">
+              AI Evaluated
+            </span>
+          </button>
+
+          <button
+            id="mode-rapid-mcq-btn"
+            onClick={() => {
+              setDrillMode("rapid-choice");
+              setActiveMiniGame("none");
+            }}
+            className={`flex-1 sm:flex-initial px-4 py-2 rounded-lg text-xs md:text-sm font-black flex items-center justify-center gap-2 transition-all ${
+              drillMode === "rapid-choice"
+                ? "bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 shadow-md shadow-orange-500/25"
+                : "text-slate-400 hover:text-slate-200"
+            }`}
+          >
+            <Zap className="w-4 h-4" />
+            <span>2-Choice Reflex Drill</span>
+          </button>
+
+          <button
+            id="mode-simulators-btn"
+            onClick={() => {
+              setDrillMode("simulators");
+              if (activeMiniGame === "none") setActiveMiniGame("drop");
+            }}
+            className={`flex-1 sm:flex-initial px-4 py-2 rounded-lg text-xs md:text-sm font-black flex items-center justify-center gap-2 transition-all ${
+              drillMode === "simulators"
+                ? "bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 shadow-md shadow-orange-500/25"
+                : "text-slate-400 hover:text-slate-200"
+            }`}
+          >
+            <Activity className="w-4 h-4" />
+            <span>Simulators</span>
+          </button>
+        </div>
+
+        <div className="hidden md:flex items-center gap-2 text-xs text-slate-400 pr-3">
+          <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+          <span>Child Safety AI Analysis Engine</span>
+        </div>
+      </div>
+
+      {/* 1. AI SHORT ANSWER CHALLENGES MODE */}
+      {drillMode === "short-answer" && (
+        <ShortAnswerDrill onEarnScore={(pts) => setScore((p) => p + pts)} />
+      )}
+
+      {/* 2. INTERACTIVE SIMULATORS MODE */}
+      {drillMode === "simulators" && (
+        <div className="space-y-6">
+          {/* Quick Interactive Mini-Game Launcher Bar */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <button
-              key={loc.id}
-              onClick={() => handleLocationChange(loc.id as any)}
-              className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 whitespace-nowrap transition-all ${
-                isSelected
-                  ? "bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 shadow-md shadow-orange-500/20 scale-105"
-                  : "bg-slate-900/80 hover:bg-slate-800 text-slate-300 border border-slate-800"
+              onClick={() => setActiveMiniGame(activeMiniGame === "drop" ? "none" : "drop")}
+              className={`p-3 rounded-xl border text-left transition-all flex items-center justify-between ${
+                activeMiniGame === "drop"
+                  ? "bg-amber-500/20 border-amber-500/60 text-amber-300 ring-2 ring-amber-500/30"
+                  : "bg-slate-900/60 hover:bg-slate-900 border-slate-800 text-slate-300"
               }`}
             >
-              <Icon className="w-3.5 h-3.5" />
-              {loc.label}
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center">
+                  <Shield className="w-4 h-4" />
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-white">Reflex Mini-Game</div>
+                  <div className="text-[11px] text-slate-400">Drop, Cover, Hold On</div>
+                </div>
+              </div>
+              <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                {activeMiniGame === "drop" ? "Active" : "Play"}
+              </span>
             </button>
-          );
-        })}
-      </div>
 
-      {/* Quick Interactive Mini-Game Launcher Bar */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <button
-          onClick={() => setActiveMiniGame(activeMiniGame === "drop" ? "none" : "drop")}
-          className={`p-3 rounded-xl border text-left transition-all flex items-center justify-between ${
-            activeMiniGame === "drop"
-              ? "bg-amber-500/20 border-amber-500/60 text-amber-300 ring-2 ring-amber-500/30"
-              : "bg-slate-900/60 hover:bg-slate-900 border-slate-800 text-slate-300"
-          }`}
-        >
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center">
-              <Shield className="w-4 h-4" />
-            </div>
-            <div>
-              <div className="text-xs font-bold text-white">Reflex Mini-Game</div>
-              <div className="text-[11px] text-slate-400">Drop, Cover, Hold On</div>
-            </div>
+            <button
+              onClick={() => setActiveMiniGame(activeMiniGame === "fire" ? "none" : "fire")}
+              className={`p-3 rounded-xl border text-left transition-all flex items-center justify-between ${
+                activeMiniGame === "fire"
+                  ? "bg-orange-500/20 border-orange-500/60 text-orange-300 ring-2 ring-orange-500/30"
+                  : "bg-slate-900/60 hover:bg-slate-900 border-slate-800 text-slate-300"
+              }`}
+            >
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-orange-500/20 text-orange-400 flex items-center justify-center">
+                  <Flame className="w-4 h-4" />
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-white">P.A.S.S. Simulator</div>
+                  <div className="text-[11px] text-slate-400">Aim & Extinguish Fire</div>
+                </div>
+              </div>
+              <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-orange-500/20 text-orange-300 border border-orange-500/30">
+                {activeMiniGame === "fire" ? "Active" : "Play"}
+              </span>
+            </button>
+
+            <button
+              onClick={() => setActiveMiniGame(activeMiniGame === "cpr" ? "none" : "cpr")}
+              className={`p-3 rounded-xl border text-left transition-all flex items-center justify-between ${
+                activeMiniGame === "cpr"
+                  ? "bg-rose-500/20 border-rose-500/60 text-rose-300 ring-2 ring-rose-500/30"
+                  : "bg-slate-900/60 hover:bg-slate-900 border-slate-800 text-slate-300"
+              }`}
+            >
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-rose-500/20 text-rose-400 flex items-center justify-center">
+                  <Activity className="w-4 h-4" />
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-white">CPR Beat Trainer</div>
+                  <div className="text-[11px] text-slate-400">110 BPM Metronome</div>
+                </div>
+              </div>
+              <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/30">
+                {activeMiniGame === "cpr" ? "Active" : "Play"}
+              </span>
+            </button>
           </div>
-          <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
-            {activeMiniGame === "drop" ? "Active" : "Play"}
-          </span>
-        </button>
 
-        <button
-          onClick={() => setActiveMiniGame(activeMiniGame === "fire" ? "none" : "fire")}
-          className={`p-3 rounded-xl border text-left transition-all flex items-center justify-between ${
-            activeMiniGame === "fire"
-              ? "bg-orange-500/20 border-orange-500/60 text-orange-300 ring-2 ring-orange-500/30"
-              : "bg-slate-900/60 hover:bg-slate-900 border-slate-800 text-slate-300"
-          }`}
-        >
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-orange-500/20 text-orange-400 flex items-center justify-center">
-              <Flame className="w-4 h-4" />
-            </div>
-            <div>
-              <div className="text-xs font-bold text-white">P.A.S.S. Simulator</div>
-              <div className="text-[11px] text-slate-400">Aim & Extinguish Fire</div>
-            </div>
+          {/* Embedded Mini-Game view when activated */}
+          {activeMiniGame === "drop" && (
+            <DropCoverHoldSim onScoreEarned={(pts) => setScore((p) => p + pts)} />
+          )}
+          {activeMiniGame === "fire" && (
+            <FireExtinguisherSim onScoreEarned={(pts) => setScore((p) => p + pts)} />
+          )}
+          {activeMiniGame === "cpr" && (
+            <CprTrainer onScoreEarned={(pts) => setScore((p) => p + pts)} />
+          )}
+        </div>
+      )}
+
+      {/* 3. RAPID 2-CHOICE REFLEX DRILL MODE */}
+      {drillMode === "rapid-choice" && (
+        <div className="space-y-6">
+          {/* Location Filter / Campaign Selector */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider whitespace-nowrap mr-1 flex items-center gap-1">
+              <Compass className="w-3.5 h-3.5 text-amber-400" /> Places:
+            </span>
+            {[
+              { id: "all", label: "All Scenarios", icon: Shield },
+              { id: "school", label: "School Classroom", icon: School },
+              { id: "highrise", label: "High-Rise Apartment", icon: Building2 },
+              { id: "metro", label: "Metro Station", icon: Train },
+              { id: "home", label: "Home & Kitchen", icon: Home },
+              { id: "mall", label: "Shopping Mall", icon: ShoppingBag },
+              { id: "outdoors", label: "Coast & Outdoors", icon: Waves },
+            ].map((loc) => {
+              const Icon = loc.icon;
+              const isSelected = selectedLocation === loc.id;
+              return (
+                <button
+                  key={loc.id}
+                  onClick={() => handleLocationChange(loc.id as any)}
+                  className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 whitespace-nowrap transition-all ${
+                    isSelected
+                      ? "bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 shadow-md shadow-orange-500/20 scale-105"
+                      : "bg-slate-900/80 hover:bg-slate-800 text-slate-300 border border-slate-800"
+                  }`}
+                >
+                  <Icon className="w-3.5 h-3.5" />
+                  {loc.label}
+                </button>
+              );
+            })}
           </div>
-          <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-orange-500/20 text-orange-300 border border-orange-500/30">
-            {activeMiniGame === "fire" ? "Active" : "Play"}
-          </span>
-        </button>
-
-        <button
-          onClick={() => setActiveMiniGame(activeMiniGame === "cpr" ? "none" : "cpr")}
-          className={`p-3 rounded-xl border text-left transition-all flex items-center justify-between ${
-            activeMiniGame === "cpr"
-              ? "bg-rose-500/20 border-rose-500/60 text-rose-300 ring-2 ring-rose-500/30"
-              : "bg-slate-900/60 hover:bg-slate-900 border-slate-800 text-slate-300"
-          }`}
-        >
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-rose-500/20 text-rose-400 flex items-center justify-center">
-              <Activity className="w-4 h-4" />
-            </div>
-            <div>
-              <div className="text-xs font-bold text-white">CPR Beat Trainer</div>
-              <div className="text-[11px] text-slate-400">110 BPM Metronome</div>
-            </div>
-          </div>
-          <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/30">
-            {activeMiniGame === "cpr" ? "Active" : "Play"}
-          </span>
-        </button>
-      </div>
-
-      {/* Embedded Mini-Game view when activated */}
-      {activeMiniGame === "drop" && (
-        <DropCoverHoldSim onScoreEarned={(pts) => setScore((p) => p + pts)} />
-      )}
-      {activeMiniGame === "fire" && (
-        <FireExtinguisherSim onScoreEarned={(pts) => setScore((p) => p + pts)} />
-      )}
-      {activeMiniGame === "cpr" && (
-        <CprTrainer onScoreEarned={(pts) => setScore((p) => p + pts)} />
-      )}
 
       {/* MAIN GAME SCENARIO CARD */}
       {!isGameOver && !isVictory && (
@@ -599,6 +675,8 @@ export const GameSection: React.FC<GameSectionProps> = ({ onNavigateToCourses, o
               Emergency AI Bot
             </button>
           </div>
+        </div>
+      )}
         </div>
       )}
     </div>

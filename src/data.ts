@@ -325,12 +325,76 @@ export const SCENARIOS: ScenarioQuestion[] = [
 export const COURSES: CourseModule[] = [
   {
     id: "cpr-basics",
-    title: "Hands-Only CPR & Cardiac Arrest Response",
+    title: "CPR & Basic Life Support",
     category: "First Aid",
     estimatedMinutes: 5,
     badge: "Life Saver",
-    summary: "Learn the life-saving 100-120 BPM chest compression technique that doubles survival rates during sudden cardiac emergencies.",
+    summary: "Learn life-saving 100-120 BPM chest compressions that preserve brain viability during sudden cardiac arrest, plus AED deployment.",
     interactiveType: "cpr-metronome",
+    videos: [
+      {
+        id: "cpr-vid-1",
+        title: "Hands-Only CPR Instructional Video",
+        organization: "American Heart Association",
+        duration: "1:03",
+        youtubeId: "M4ACYp75mjU",
+        description: "Official American Heart Association guide on performing high-quality chest compressions at 100-120 beats per minute to double cardiac arrest survival rates.",
+        keyTimestamps: [
+          { time: "0:12", seconds: 12, label: "Check Responsiveness & Breathing" },
+          { time: "0:25", seconds: 25, label: "Call 911 / 112 for Emergency Help" },
+          { time: "0:35", seconds: 35, label: "Center of Chest Hand Placement" },
+          { time: "0:45", seconds: 45, label: "Push Hard & Fast (100-120 BPM)" }
+        ],
+        level: "Essential",
+        instructorTip: "Position your shoulders directly above your hands and lock your elbows straight. Use your upper body weight to drive compressions at least 2 inches deep.",
+        learningObjectives: [
+          "Recognize sudden cardiac arrest in under 10 seconds",
+          "Deliver 100 to 120 beats/minute chest compressions",
+          "Allow full chest recoil between every push without lifting hands"
+        ]
+      },
+      {
+        id: "cpr-vid-2",
+        title: "Hands-Only CPR with an AED",
+        organization: "American Heart Association",
+        duration: "1:48",
+        youtubeId: "M7I3mJTy4RI",
+        description: "Official American Heart Association guide showing how to combine continuous Hands-Only CPR compressions with an Automated External Defibrillator (AED).",
+        keyTimestamps: [
+          { time: "0:15", seconds: 15, label: "Turn On AED & Follow Spoken Prompts" },
+          { time: "0:35", seconds: 35, label: "Attach Electrode Pads to Bare Chest" },
+          { time: "1:00", seconds: 60, label: "Clear Patient for Heart Rhythm Analysis" },
+          { time: "1:20", seconds: 80, label: "Deliver Shock & Resume Compressions Immediately" }
+        ],
+        level: "Comprehensive",
+        instructorTip: "Never peel off the AED electrode pads once applied. If the AED advises a shock, shout 'STAND CLEAR!' loudly and ensure no one is touching the patient.",
+        learningObjectives: [
+          "Power on and follow clear AED voice instructions",
+          "Affix adhesive pads: upper right chest and lower left ribs",
+          "Resume CPR compressions instantly after defibrillation shock"
+        ]
+      },
+      {
+        id: "cpr-vid-3",
+        title: "Learn Hands-Only CPR in 90 Seconds",
+        organization: "American Heart Association",
+        duration: "1:32",
+        youtubeId: "hblmFtbyYKQ",
+        description: "Concise summary from the American Heart Association showing real-world bystander intervention and why immediate compressions save lives.",
+        keyTimestamps: [
+          { time: "0:10", seconds: 10, label: "Why Bystander CPR is Crucial" },
+          { time: "0:30", seconds: 30, label: "Two Steps: Call 911 & Push Center of Chest" },
+          { time: "1:00", seconds: 60, label: "Staying Alive Tempo Practice" }
+        ],
+        level: "Essential",
+        instructorTip: "Don't be afraid to push hard. Any CPR is better than no CPR. Ribs may crack or click, which is common; keep pushing to circulate oxygenated blood to the brain.",
+        learningObjectives: [
+          "Overcome hesitation when a victim collapses",
+          "Maintain rhythm to Bee Gees' Stayin' Alive (100-120 BPM)",
+          "Continue until professional emergency medics take over"
+        ]
+      }
+    ],
     keyTakeaways: [
       "Check responsiveness and shout for an AED + call 112/911.",
       "Push hard and fast in the center of the chest (2 to 2.4 inches deep).",
@@ -341,44 +405,107 @@ export const COURSES: CourseModule[] = [
       {
         stepNumber: 1,
         title: "Assess Scene Safety & Patient Responsiveness",
-        description: "Ensure the surroundings are safe from traffic, electrical wires, or fire. Tap the victim firmly on the collarbones and shout loudly: 'Are you OK?'",
-        actionCallout: "If no response and no normal breathing (only gasping), immediately initiate Cardiac Arrest Protocol.",
+        description: "Ensure the surroundings are safe. Tap the victim firmly on the collarbones and shout: 'Are you OK?'",
+        actionCallout: "If no response and no normal breathing, immediately initiate Cardiac Arrest Protocol.",
         iconName: "UserCheck",
         caution: "Agonal gasping is NOT normal breathing. Treat it as cardiac arrest immediately."
       },
       {
         stepNumber: 2,
         title: "Call Emergency Dispatch & Delegate AED",
-        description: "Point directly at a specific person: 'You in the blue shirt, call 112 (or 911) now and find an AED (Automated External Defibrillator)!'",
+        description: "Point directly at a bystander: 'Call 112 (or 911) now and bring an AED!'",
         actionCallout: "Put the dispatcher on speakerphone so you can follow real-time medical instructions.",
-        iconName: "PhoneCall",
-        proTip: "Directing one specific person avoids the bystander effect where everyone assumes someone else called."
+        iconName: "PhoneCall"
       },
       {
         stepNumber: 3,
         title: "Hand Placement on Center of Chest",
-        description: "Place the heel of one hand in the center of the chest (lower half of breastbone). Interlock your other hand on top. Lock your elbows straight and position shoulders directly above hands.",
-        actionCallout: "Use your upper body weight, not just arm strength, to drive vertical compressions.",
+        description: "Place heel of one hand in the center of the chest. Interlock your other hand on top. Lock your elbows straight and position shoulders directly above hands.",
+        actionCallout: "Use upper body weight, not just arms, to drive compressions.",
         iconName: "HeartHandshake"
       },
       {
         stepNumber: 4,
-        title: "Push Hard & Push Fast (100–120 BPM)",
-        description: "Compress the chest at least 2 inches (5 cm) deep at a cadence of 100-120 beats per minute. Do not stop until professional medics arrive or an AED is ready to analyze.",
-        actionCallout: "Test your rhythm with the interactive SafeDrill Metronome tool below!",
-        iconName: "Activity",
-        proTip: "Sing the rhythm of 'Stayin' Alive' by Bee Gees or 'Baby Shark' in your head to hold the perfect 110 BPM rate."
+        title: "Push Hard & Fast (100–120 BPM)",
+        description: "Compress chest at least 2 inches deep at 100-120 BPM until emergency medics arrive or AED analyzes.",
+        actionCallout: "Allow chest to recoil fully between compressions.",
+        iconName: "Activity"
       }
     ]
   },
   {
     id: "fire-extinguisher-pass",
-    title: "Fire Extinguisher Mastery: The P.A.S.S. Technique",
+    title: "Fire Extinguisher & Fire Safety",
     category: "Fire Safety",
     estimatedMinutes: 4,
     badge: "Fire Guardian",
     summary: "Master the international 4-step P.A.S.S. protocol to safely control incipient-stage fires and know when to evacuate.",
     interactiveType: "fire-pass-sim",
+    videos: [
+      {
+        id: "fire-vid-1",
+        title: "How to Use a Fire Extinguisher Using the PASS Method",
+        organization: "CQ Fire & Safety",
+        duration: "2:04",
+        youtubeId: "PQV71INDaqY",
+        description: "Clear, practical demonstration of Pull, Aim, Squeeze, and Sweep against live flames with standard ABC dry chemical fire extinguishers.",
+        keyTimestamps: [
+          { time: "0:15", seconds: 15, label: "Extinguisher Inspection & Pressure Gauge Check" },
+          { time: "0:40", seconds: 40, label: "P - Pull the Locking Pin" },
+          { time: "1:00", seconds: 60, label: "A - Aim Low at the Base of the Flames" },
+          { time: "1:25", seconds: 85, label: "S & S - Squeeze Handle & Sweep Base" }
+        ],
+        level: "Essential",
+        instructorTip: "Keep your back to an unobstructed exit. Never let the fire get between you and your escape door. If smoke thickens or flames rise above waist level, evacuate immediately.",
+        learningObjectives: [
+          "Verify the pressure gauge needle is in the green zone",
+          "Aim directly at burning fuel embers rather than smoke",
+          "Sweep horizontally until all embers are fully smothered"
+        ]
+      },
+      {
+        id: "fire-vid-2",
+        title: "How to Use a Fire Extinguisher: The PASS Method Demonstration",
+        organization: "Ally Safety",
+        duration: "3:12",
+        youtubeId: "OhmiECKjYx8",
+        description: "Workplace safety specialist demonstration explaining chemical agent discharge distance, wind direction, and common mistakes.",
+        keyTimestamps: [
+          { time: "0:30", seconds: 30, label: "Stand 6-8 Feet Back From Fire" },
+          { time: "1:15", seconds: 75, label: "Unlocking Safety Pin without Squeezing Lever" },
+          { time: "1:50", seconds: 110, label: "Sweeping Across Fire Base Effectively" },
+          { time: "2:35", seconds: 155, label: "Backing Away Carefully - Never Turn Your Back" }
+        ],
+        level: "Essential",
+        instructorTip: "Hold the lower carrying handle when pulling the pin. If you squeeze the upper trigger lever while trying to pull the pin, the locking pin will bind tightly.",
+        learningObjectives: [
+          "Maintain proper 6 to 8 feet stand-off distance",
+          "Proper two-handed grip on nozzle and carry handle",
+          "Always back away while keeping eyes on the fire"
+        ]
+      },
+      {
+        id: "fire-vid-3",
+        title: "How to Use a Fire Extinguisher - PASS Method",
+        organization: "Cintas",
+        duration: "1:52",
+        youtubeId: "heVKavoFhKA",
+        description: "Commercial and home fire emergency response protocol: assessing fire scale, escape route clearance, and discharge control.",
+        keyTimestamps: [
+          { time: "0:10", seconds: 10, label: "Sound Alarm & Confirm Evacuation Route" },
+          { time: "0:35", seconds: 35, label: "Pull Pin & Break Plastic Tamper Seal" },
+          { time: "0:55", seconds: 55, label: "Aim Low & Squeeze Lever Controlled" },
+          { time: "1:20", seconds: 80, label: "Sweep Base & Watch for Re-flash" }
+        ],
+        level: "Essential",
+        instructorTip: "Remember that portable fire extinguishers only discharge for approximately 10 to 15 seconds. Make every second count by aiming before squeezing.",
+        learningObjectives: [
+          "Evaluate if fire is in the incipient (small) stage",
+          "Deliver steady, controlled chemical sweeps",
+          "Confirm complete extinguishment without flashover"
+        ]
+      }
+    ],
     keyTakeaways: [
       "Always maintain an unobstructed escape path behind your back.",
       "P.A.S.S. stands for Pull, Aim, Squeeze, Sweep.",
@@ -389,109 +516,154 @@ export const COURSES: CourseModule[] = [
       {
         stepNumber: 1,
         title: "P - Pull the Safety Pin",
-        description: "Break the tamper plastic seal and pull the ring pin located at the top handle. This unlocks the discharge trigger mechanism.",
-        actionCallout: "Firmly pull ring straight out. Hold the lower carrying handle, not the trigger lever while pulling.",
+        description: "Break the tamper plastic seal and pull the ring pin located at the top handle.",
+        actionCallout: "Hold the lower carrying handle, not the trigger lever while pulling.",
         iconName: "LockOpen"
       },
       {
         stepNumber: 2,
         title: "A - Aim Low at the Base of the Fire",
-        description: "Hold the hose nozzle firmly and aim directly at the fuel source or base of the fire. Aiming at the high flames will waste extinguishing agent without smothering fuel.",
-        actionCallout: "Stand approximately 6 to 8 feet (2 meters) away from the flames before discharging.",
+        description: "Aim nozzle directly at the fuel source or base of the fire, not the top flames.",
+        actionCallout: "Stand 6 to 8 feet away from the flames before discharging.",
         iconName: "Target",
         caution: "Do not stand too close; high-pressure chemical blast can scatter burning debris."
       },
       {
         stepNumber: 3,
         title: "S - Squeeze the Operating Lever",
-        description: "Squeeze the top trigger handle smoothly and steadily to release the extinguishing agent (Dry Chemical ABC or CO2).",
+        description: "Squeeze top trigger handle smoothly and steadily to release extinguishing agent.",
         actionCallout: "Releasing the handle stops the flow.",
         iconName: "Zap"
       },
       {
         stepNumber: 4,
         title: "S - Sweep Side-to-Side Across the Base",
-        description: "Move the nozzle slowly from side to side in a sweeping motion across the base of the fire until all flames are completely extinguished. Watch for re-ignition.",
-        actionCallout: "If fire does not diminish within 5 seconds, retreat immediately through your exit.",
-        iconName: "Flame",
-        proTip: "Never turn your back on an extinguished fire—smoldering embers can reignite violently."
+        description: "Move nozzle side to side across fire base until all flames are completely extinguished.",
+        actionCallout: "If fire doesn't diminish within 5 seconds, retreat immediately.",
+        iconName: "Flame"
       }
     ]
   },
   {
-    id: "choking-heimlich",
-    title: "Choking Emergency & Heimlich Maneuver",
+    id: "bleeding-control",
+    title: "Severe Bleeding & First Aid",
     category: "First Aid",
-    estimatedMinutes: 4,
-    badge: "Airway Hero",
-    summary: "Recognize universal choking signs and perform abdominal thrusts to dislodge airway obstructions in seconds.",
-    interactiveType: "heimlich-steps",
+    estimatedMinutes: 5,
+    badge: "Trauma Medic",
+    summary: "Stop catastrophic arterial blood loss in under 60 seconds with direct pressure, wound packing, and modern tactical tourniquets.",
+    videos: [
+      {
+        id: "bleed-vid-1",
+        title: "How To STOP THE BLEED®",
+        organization: "American College of Surgeons",
+        duration: "4:18",
+        youtubeId: "7LEqWoK_aS0",
+        description: "The official American College of Surgeons STOP THE BLEED protocol: applying firm pressure, packing deep wounds, and locking a windlass tourniquet.",
+        keyTimestamps: [
+          { time: "0:30", seconds: 30, label: "Identify Life-Threatening Bleeding" },
+          { time: "1:10", seconds: 70, label: "Direct Pressure with Two Hands & Bodyweight" },
+          { time: "2:10", seconds: 130, label: "Wound Packing into Deep Cavity" },
+          { time: "3:00", seconds: 180, label: "Tourniquet Placement & Windlass Tightening" }
+        ],
+        level: "Essential",
+        instructorTip: "Uncontrolled bleeding can kill within 3 to 5 minutes. Take immediate action: call 911/112, apply firm pressure, and don't hesitate to deploy a tourniquet.",
+        learningObjectives: [
+          "Recognize spurting or pooling arterial hemorrhage",
+          "Apply two-handed unrelenting bodyweight pressure",
+          "Lock tourniquet windlass rod into the retention clip"
+        ]
+      },
+      {
+        id: "bleed-vid-2",
+        title: "How to Use a Tourniquet to Control Life-Threatening Bleeding",
+        organization: "American Red Cross",
+        duration: "1:35",
+        youtubeId: "k98ilfQmUWw",
+        description: "Official American Red Cross step-by-step video on applying a commercial windlass tourniquet to an injured arm or leg.",
+        keyTimestamps: [
+          { time: "0:15", seconds: 15, label: "Position 2 to 3 Inches Above Wound" },
+          { time: "0:35", seconds: 35, label: "Pull Band Tight & Fasten Hook-and-Loop" },
+          { time: "0:55", seconds: 55, label: "Twist Windlass Rod Until Bleeding Stops" },
+          { time: "1:15", seconds: 75, label: "Secure in Clip & Record Time Applied" }
+        ],
+        level: "Essential",
+        instructorTip: "Place the tourniquet 2 to 3 inches above the wound on the limb (closer to the heart). Do NOT place it over a joint (elbow or knee); place it higher if needed.",
+        learningObjectives: [
+          "Eliminate slack in the strap before twisting windlass",
+          "Twist windlass until bright red bleeding completely stops",
+          "Mark exact application time (T = HH:MM) on white strap"
+        ]
+      },
+      {
+        id: "bleed-vid-3",
+        title: "How to Use Direct Pressure to Control Life-Threatening Bleeding",
+        organization: "American Red Cross",
+        duration: "1:21",
+        youtubeId: "YJB3fI3T1oo",
+        description: "Official American Red Cross instructions for using clean cloth or gauze with continuous direct pressure when no tourniquet is available.",
+        keyTimestamps: [
+          { time: "0:10", seconds: 10, label: "Call Emergency Dispatch Immediately" },
+          { time: "0:30", seconds: 30, label: "Expose Wound & Place Gauze / Clean Cloth" },
+          { time: "0:50", seconds: 50, label: "Lock Arms Straight & Push Down With Bodyweight" },
+          { time: "1:05", seconds: 65, label: "Never Remove Blood-Soaked Gauze - Add More on Top" }
+        ],
+        level: "Essential",
+        instructorTip: "If blood soaks through your dressing, do NOT remove the first layer (you will disrupt blood clots). Place additional dressings directly on top and press harder.",
+        learningObjectives: [
+          "Maintain unbroken pressure until paramedics arrive",
+          "Leverage upper body weight instead of finger muscles",
+          "Calm and stabilize the trauma patient"
+        ]
+      },
+      {
+        id: "bleed-vid-4",
+        title: "Stop-the-Bleed: How to Apply a Tourniquet to a Trauma Wound",
+        organization: "UCI Health",
+        duration: "2:46",
+        youtubeId: "qxH_NzFUwpM",
+        description: "UCI Health trauma nurse demonstration showing real-time application of the Combat Application Tourniquet (C-A-T) on an injured extremity.",
+        keyTimestamps: [
+          { time: "0:25", seconds: 25, label: "Slide Tourniquet High and Tight on Limb" },
+          { time: "1:00", seconds: 60, label: "Pull Strap Completely Free of Slack" },
+          { time: "1:40", seconds: 100, label: "Turn Windlass 2 to 3 Rotations" },
+          { time: "2:15", seconds: 135, label: "Verify Absence of Distal Radial/Pedal Pulse" }
+        ],
+        level: "Essential",
+        instructorTip: "Tourniquet application will be painful for a conscious victim. Explain to them that it is saving their life and must stay tight until surgeons take over.",
+        learningObjectives: [
+          "Master tourniquet threading without slack",
+          "Verify that distal pulse is completely occluded",
+          "Secure the time strap across the windlass clip"
+        ]
+      }
+    ],
     keyTakeaways: [
-      "Universal choking sign: hands clutching the throat with inability to speak or cough.",
-      "Alternate 5 back blows between shoulder blades with 5 abdominal thrusts.",
-      "Thrust inward and upward just above the navel.",
-      "For pregnant or obese victims, use chest thrusts instead of abdominal thrusts."
+      "A person can bleed to death from an open artery in less than 3 minutes.",
+      "Apply firm, uninterrupted bodyweight pressure with clean cloth or sterile gauze.",
+      "Apply a tourniquet 2 to 3 inches above the wound (never directly over a joint).",
+      "Tighten windlass until bright red bleeding completely stops and distal pulse vanishes."
     ],
     steps: [
       {
         stepNumber: 1,
-        title: "Verify Severe Airway Obstruction",
-        description: "Ask: 'Are you choking? Can you speak?' If the person can cough forcefully or speak, encourage them to cough. If silent or gasping with blue lips, intervene immediately.",
-        actionCallout: "Send someone to call 112/911 right away.",
+        title: "Expose Wound & Assess Bleeding",
+        description: "Expose the wound to find the exact source of arterial bleeding.",
+        actionCallout: "Call 112/911 immediately and shout for a trauma first aid kit.",
         iconName: "AlertTriangle"
       },
       {
         stepNumber: 2,
-        title: "Give 5 Firm Back Blows",
-        description: "Stand behind and slightly to one side. Support their upper chest with one hand and lean them forward. Deliver 5 sharp blows between shoulder blades with heel of your other hand.",
-        actionCallout: "Check after each blow if object has cleared.",
-        iconName: "Hand"
+        title: "Apply Relentless Direct Pressure",
+        description: "Press down directly on the bleeding vessel with locked elbows using all your upper body weight.",
+        actionCallout: "Do not peek under the gauze to check—hold continuous pressure.",
+        iconName: "Sparkles"
       },
       {
         stepNumber: 3,
-        title: "Perform 5 Abdominal Thrusts (Heimlich)",
-        description: "Stand behind victim. Wrap arms around waist. Make a fist with thumb side against the abdomen, just above the belly button. Grasp fist with other hand and thrust inward and upward rapidly.",
-        actionCallout: "Think of an upward 'J' motion to create diaphragmatic air pressure pop.",
-        iconName: "Sparkles",
-        caution: "If victim loses consciousness, gently lower to floor and start CPR compressions."
-      }
-    ]
-  },
-  {
-    id: "go-bag-mastery",
-    title: "72-Hour Disaster Go-Bag Essentials",
-    category: "Preparedness",
-    estimatedMinutes: 3,
-    badge: "Ready Master",
-    summary: "Assemble a lightweight, life-sustaining survival kit ready to grab in under 10 seconds during sudden evacuations.",
-    interactiveType: "go-bag-builder",
-    keyTakeaways: [
-      "Minimum 3-day supply (72 hours) of water: 1 gallon (3.8L) per person per day.",
-      "Non-perishable high-calorie food bars, nuts, or MREs.",
-      "Crucial waterproof document pouch (IDs, property papers, insurance, emergency cash).",
-      "Power bank, hand-crank emergency radio, flashlight, and first aid kit."
-    ],
-    steps: [
-      {
-        stepNumber: 1,
-        title: "Hydration & Nutrition Core",
-        description: "Water is priority #1. Pack durable water pouches or purification tablets along with compact energy bars requiring no cooking.",
-        actionCallout: "Rotate water and food supplies every 6-12 months.",
-        iconName: "Droplets"
-      },
-      {
-        stepNumber: 2,
-        title: "Medical & Critical Prescriptions",
-        description: "Include a 7-day reserve of essential daily medications, trauma tourniquet, sterile gauze, burn dressings, antiseptic, and N95 dust masks.",
-        actionCallout: "Keep a written copy of medical histories and blood types.",
-        iconName: "BriefcaseMed"
-      },
-      {
-        stepNumber: 3,
-        title: "Off-Grid Power & Communication",
-        description: "Pack a 20,000mAh charged power bank, USB cables, hand-crank multi-band NOAA radio, high-lumen LED headlamp, and a pea-less emergency whistle (audible up to 1 mile).",
-        actionCallout: "A whistle requires far less energy than screaming and penetrates rubble noise.",
-        iconName: "Radio"
+        title: "Deploy Tourniquet (For Arms & Legs)",
+        description: "Wrap tourniquet 2-3 inches above wound. Pull strap tight, twist windlass rod until bleeding stops, and lock in clip.",
+        actionCallout: "Write the application time (e.g. 'T: 14:32') on the tourniquet strap.",
+        iconName: "Shield"
       }
     ]
   }

@@ -16,8 +16,16 @@ import {
   Info
 } from "lucide-react";
 import { ChatMessage, EmergencyBotResponse } from "../types";
+import { 
+  speakBotGuidance, 
+  stopBotSpeech, 
+  playBotResponseChime, 
+  isSoundEnabled, 
+  setSoundEnabled 
+} from "../utils/audioEffects";
 
 export const EmergencyBot: React.FC = () => {
+
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: "welcome-1",
@@ -54,14 +62,12 @@ export const EmergencyBot: React.FC = () => {
     chatBottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isLoading]);
 
-  // Speech synthesis reader
+  // Speech synthesis reader using refined audio engine
   const speakText = (text: string) => {
-    if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = 1.0;
-    utterance.pitch = 1.0;
-    window.speechSynthesis.speak(utterance);
+    if (!speechEnabled) return;
+    speakBotGuidance(text, {
+      rate: 0.95,
+    });
   };
 
   const handleSendMessage = async (queryText?: string) => {
@@ -79,6 +85,7 @@ export const EmergencyBot: React.FC = () => {
     setMessages((prev) => [...prev, userMsg]);
     setInputQuery("");
     setIsLoading(true);
+    stopBotSpeech();
 
     try {
       const response = await fetch("/api/emergency-bot", {
@@ -109,6 +116,7 @@ export const EmergencyBot: React.FC = () => {
       };
 
       setMessages((prev) => [...prev, botMsg]);
+      playBotResponseChime();
 
       // Read aloud top step if speech is enabled
       if (speechEnabled && botData.immediateSteps && botData.immediateSteps.length > 0) {
